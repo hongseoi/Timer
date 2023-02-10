@@ -1,8 +1,10 @@
 import 'dart:async'; //타이머 클래스 제공하는 패키지
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sprintf/sprintf.dart';
 import 'package:timer/style/TextStyle.dart';
+import 'package:timer/tools/utils.dart';
 
 //time status 선언
 enum TimerStatus {running, paused, stopped, resting}
@@ -86,7 +88,7 @@ class _TimerScreenState extends State<TimerScreen> {
           break;
         case TimerStatus.running:
           if (_timer <= 0){
-            print("작업 완료!");
+            showToast("작업 완료!");
             rest();
           }else{
             setState(() {
@@ -99,7 +101,7 @@ class _TimerScreenState extends State<TimerScreen> {
             setState(() {
               _pomodoroCount += 1;
             });
-            print('오늘 $_pomodoroCount개의 뽀모도로를 달성했습니다.');
+            showToast('오늘 $_pomodoroCount개의 뽀모도로를 달성했습니다.');
             t.cancel();
             stop();
           }else{
@@ -119,15 +121,16 @@ class _TimerScreenState extends State<TimerScreen> {
   Widget build(BuildContext context){
     final List<Widget> _runningButtons = [
       ElevatedButton(
-        onPressed: (){}, 
         child: Text(
           1 == 2 ? '계속하기':'일시정지',
           style: TextStyles.dark_15,
         ),
         style: ElevatedButton.styleFrom(primary: Colors.red),
+        onPressed: _timerStatus == TimerStatus.paused? resume: pause, 
+
         ),
         ElevatedButton(
-          onPressed: (){}, 
+          onPressed: stop, 
           child: Text(
             '포기하기',
             style: TextStyles.dark_15,
@@ -137,13 +140,13 @@ class _TimerScreenState extends State<TimerScreen> {
     ];
 
     final List<Widget> _stoppedButtons = [
-      ElevatedButton(onPressed: (){}, 
+      ElevatedButton(onPressed: run, 
       child: Text(
         '시작하기',
         style: TextStyles.dark_15,
       ),
       style: ElevatedButton.styleFrom(
-        primary: 1 == 2? Colors.green: Colors.blue,
+        primary: 1==2? Colors.green: Colors.blue,
       ),
       ),
     ];
